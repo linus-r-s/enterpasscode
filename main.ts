@@ -2,16 +2,16 @@ function enterCode () {
     serial.writeLine("ENTER PASSCODE")
     for (let idx = 0; idx <= passcode.length - 1; idx++) {
         led.plot(idx, 2)
-        buttonPressed = 0
-        while (buttonPressed == 0) {
+        buttonPressed = false
+        while (!(buttonPressed)) {
             if (input.buttonIsPressed(Button.A)) {
-                if (checkButton("A", idx) == 1) {
+                if (checkButton("A", idx)) {
                     continue;
                 } else {
                     raiseAlarm()
                 }
             } else if (input.buttonIsPressed(Button.B)) {
-                if (checkButton("B", idx) == 1) {
+                if (checkButton("B", idx)) {
                     continue;
                 } else {
                     raiseAlarm()
@@ -21,19 +21,19 @@ function enterCode () {
     }
 }
 function checkButton (btn: string, index: number) {
-    buttonPressed = 1
+    buttonPressed = true
     if (passcode.charAt(index) != btn) {
-        return 0
+        return false
     }
     basic.pause(500)
     basic.clearScreen()
-    return 1
+    return true
 }
 function raiseAlarm () {
     serial.writeLine("ALARM!")
     basic.showIcon(IconNames.Skull)
 }
-let buttonPressed = 0
+let buttonPressed = false
 let passcode = ""
 passcode = "AABB"
 enterCode()
