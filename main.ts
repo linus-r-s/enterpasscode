@@ -37,7 +37,7 @@ let buttonPressed = false
 let passcode = ""
 passcode = "AABB"
 enterCode()
-serial.writeLine("ARMED OR WHATEVER")
+serial.writeLine("LARMAT")
 basic.clearScreen()
 basic.showIcon(IconNames.Yes)
 basic.pause(5000)
