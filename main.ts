@@ -41,6 +41,7 @@ function showStatus () {
                 . # # # .
                 . # # # .
                 `)
+            motionSensor()
         } else {
             basic.showLeds(`
                 . # . . .
@@ -76,17 +77,28 @@ function stopAlarm () {
     serial.writeLine("ALARM STOPPED")
     basic.clearScreen()
 }
+function motionSensor () {
+    a = Math.abs(input.acceleration(Dimension.Z))
+    if (!(alarming)) {
+        if (a > sensitivity) {
+            raiseAlarm()
+        }
+    }
+}
 function raiseAlarm () {
     alarming = true
     serial.writeLine("ALARM!")
     basic.showIcon(IconNames.Skull)
 }
+let a = 0
 let buttonPressed = false
 let enteringCode = false
 let armed = false
 let alarming = false
+let sensitivity = 0
 let passcode = ""
 passcode = "AABB"
+sensitivity = 200
 alarming = false
 armed = false
 basic.forever(function () {
