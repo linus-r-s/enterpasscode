@@ -1,4 +1,6 @@
 function enterCode () {
+    enteringCode = true
+    basic.clearScreen()
     serial.writeLine("ENTER PASSCODE")
     for (let idx = 0; idx <= passcode.length - 1; idx++) {
         led.plot(idx, 2)
@@ -9,14 +11,44 @@ function enterCode () {
                     continue;
                 } else {
                     raiseAlarm()
+                    return false
                 }
             } else if (input.buttonIsPressed(Button.B)) {
                 if (checkButton("B", idx)) {
                     continue;
                 } else {
                     raiseAlarm()
+                    return false
                 }
             }
+        }
+    }
+    enteringCode = false
+    return true
+}
+function toggleArmed () {
+    armed = !(armed)
+}
+function showStatus () {
+    serial.writeLine("ARMED " + armed)
+    while (!(enteringCode) && !(alarming)) {
+        basic.clearScreen()
+        if (armed) {
+            basic.showLeds(`
+                . . # . .
+                . # . # .
+                . # # # .
+                . # # # .
+                . # # # .
+                `)
+        } else {
+            basic.showLeds(`
+                . # . . .
+                # . # . .
+                . . # # #
+                . . # # #
+                . . # # #
+                `)
         }
     }
 }
@@ -29,16 +61,34 @@ function checkButton (btn: string, index: number) {
     basic.clearScreen()
     return true
 }
+input.onButtonPressed(Button.AB, function () {
+    if (enterCode()) {
+        if (alarming) {
+            stopAlarm()
+            armed = false
+        } else {
+            toggleArmed()
+        }
+    }
+})
+function stopAlarm () {
+    alarming = false
+    serial.writeLine("ALARM STOPPED")
+    basic.clearScreen()
+}
 function raiseAlarm () {
+    alarming = true
     serial.writeLine("ALARM!")
     basic.showIcon(IconNames.Skull)
 }
 let buttonPressed = false
+let enteringCode = false
+let armed = false
+let alarming = false
 let passcode = ""
 passcode = "AABB"
-enterCode()
-serial.writeLine("LARMAT")
-basic.clearScreen()
-basic.showIcon(IconNames.Yes)
-basic.pause(5000)
-basic.clearScreen()
+alarming = false
+armed = false
+basic.forever(function () {
+    showStatus()
+})
