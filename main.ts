@@ -74,6 +74,7 @@ input.onButtonPressed(Button.AB, function () {
 })
 function stopAlarm () {
     alarming = false
+    pins.digitalWritePin(DigitalPin.P0, 0)
     serial.writeLine("ALARM STOPPED")
     basic.clearScreen()
 }
@@ -87,6 +88,7 @@ function motionSensor () {
 }
 function raiseAlarm () {
     alarming = true
+    pins.digitalWritePin(DigitalPin.P0, 1)
     serial.writeLine("ALARM!")
     basic.showIcon(IconNames.Skull)
 }
